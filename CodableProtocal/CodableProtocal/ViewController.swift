@@ -13,7 +13,7 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        title = "Codable"
+        navigationController?.title = "Codable"
         
         let urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
 
@@ -77,16 +77,23 @@ class ViewController: UITableViewController {
 //        return cell
 //
 //    }
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-               print("wananananaanan" )
 
-    }
     func tableView(tableView: UITableViewDelegate, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
        print("wananananaanan" )
        print("You deselected cell #\(indexPath.row)!")
 
     }
-
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        
+        print("Did select method is called")
+        let vc  = DetailViewController()
+        vc.detailItem = petitions[indexPath.row]
+        navigationController?.pushViewController(vc, animated: true)
+        
+    
+        
+    }
     
     
 }

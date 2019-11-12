@@ -16,48 +16,47 @@ class ViewController: UITableViewController {
         navigationController?.title = "Codable"
         
         let urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
-
-        if  let url = URL(string: urlString) {
-            print("the string is:\(url))")
-            
-            if let data = try? Data(contentsOf: url) {
-
-                // wew work here
-                
-                parse(json: data)
-                
+        DispatchQueue.global(qos: .userInitiated).async {
+            if  let url = URL(string: urlString) {
+                print("the string is:\(url))")
+                if let data = try? Data(contentsOf: url) {
+                    // wew work here
+                    self.parse(json: data)
+                    
+                }
             }
         }
         
         
+        
     }
     func parse(json: Data){
-          let decoder = JSONDecoder()
-
-          if let jsonPetitions = try? decoder.decode(Petitions.self, from: json) {
+        let decoder = JSONDecoder()
+        
+        if let jsonPetitions = try? decoder.decode(Petitions.self, from: json) {
             petitions = jsonPetitions.results
-              tableView.reloadData()
-          }
-        
-        
-        
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+        showError()
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-       // return petitions.count
+        // return petitions.count
         print(petitions.count)
         return petitions.count
     }
     
     //- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
-
-
-//   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "NavController", for: indexPath)
-//        cell.textLabel?.text = "Title goes here"
-//        cell.detailTextLabel?.text = "Subtitle goes here"
-//        return cell
-//    }
-//
+    
+    
+    //   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    //        let cell = tableView.dequeueReusableCell(withIdentifier: "NavController", for: indexPath)
+    //        cell.textLabel?.text = "Title goes here"
+    //        cell.detailTextLabel?.text = "Subtitle goes here"
+    //        return cell
+    //    }
+    //
     
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -70,18 +69,18 @@ class ViewController: UITableViewController {
         cell.detailTextLabel?.text = petition.body
         return cell
     }
-//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-//        cell.textLabel?.text = "Title goes here"
-//        cell.detailTextLabel?.text = "Subtitle goes here"
-//        return cell
-//
-//    }
-
+    //    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell{
+    //        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+    //        cell.textLabel?.text = "Title goes here"
+    //        cell.detailTextLabel?.text = "Subtitle goes here"
+    //        return cell
+    //
+    //    }
+    
     func tableView(tableView: UITableViewDelegate, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-       print("wananananaanan" )
-       print("You deselected cell #\(indexPath.row)!")
-
+        print("wananananaanan" )
+        print("You deselected cell #\(indexPath.row)!")
+        
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
@@ -91,10 +90,16 @@ class ViewController: UITableViewController {
         vc.detailItem = petitions[indexPath.row]
         navigationController?.pushViewController(vc, animated: true)
         
-    
+        
         
     }
     
-    
+    func showError() {
+        DispatchQueue.main.async {
+            let ac = UIAlertController(title: "Loading Error", message: "There eas a problem loading the feed; please check your conncetion and try again", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(ac, animated: true)
+            
+        }
+    }
 }
-
